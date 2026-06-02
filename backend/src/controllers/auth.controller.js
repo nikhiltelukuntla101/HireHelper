@@ -1,4 +1,5 @@
 import { registerUser } from "../services/auth.service.js";
+import { verifyOTPService } from "../services/auth.service.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 export const register = asyncHandler(async (req, res) => {
@@ -12,5 +13,15 @@ export const register = asyncHandler(async (req, res) => {
       email: user.email,
       role: user.role,
     },
+  });
+});
+
+export const verifyOtp = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
+  await verifyOTPService(email, otp);
+
+  res.status(200).json({
+    success: true,
+    message: "Account verified successfully",
   });
 });

@@ -11,3 +11,7 @@ export const findUserByPhone = async (phone) => {
 export const createUser = async (userData) => {
   return await User.create(userData);
 };
+
+export const findUserByEmailWithOTP = async (email) => {
+  return await User.findOne({ email }).select("+otp +otpExpiry");
+};

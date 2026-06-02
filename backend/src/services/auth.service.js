@@ -8,6 +8,7 @@ import {
 } from "../repositories/user.repository.js";
 
 import generateOtp from "../utils/generateOtp.js";
+import { findUserByEmailWithOTP } from "../repositories/user.repository.js";
 
 export const registerUser = async ({
   firstName,
@@ -45,5 +46,28 @@ export const registerUser = async ({
     otpExpiry,
   });
 
+  return user;
+};
+
+export const verifyOTPService = async (email, enteredOtp) => {
+  const user = await findUserByEmailWithOTP(email);
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+  if (user.isVerified) {
+    throw new AppError("Account already verified", 400);
+  }
+  if (user.otp !== enteredOtp) {
+    throw new AppError("Invalid OTP", 400);
+  }
+  if (user.otpExpiry < new Date()) {
+    throw new AppError("OTP expired", 400);
+  }
+
+  user.isVerified = true;
+  user.otp = undefined;
+  user.otpExpiry = undefined;
+
+  await user.save();
   return user;
 };
