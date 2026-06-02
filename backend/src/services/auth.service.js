@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import AppError from "../utils/AppError.js";
+import generateToken from "../utils/generateToken.js";
 
 import {
   findUserByEmail,
@@ -8,7 +9,10 @@ import {
 } from "../repositories/user.repository.js";
 
 import generateOtp from "../utils/generateOtp.js";
-import { findUserByEmailWithOTP } from "../repositories/user.repository.js";
+import {
+  findUserByEmailWithOTP,
+  findUserByEmailWithPassword,
+} from "../repositories/user.repository.js";
 
 export const registerUser = async ({
   firstName,
@@ -70,4 +74,28 @@ export const verifyOTPService = async (email, enteredOtp) => {
 
   await user.save();
   return user;
+};
+
+export const loginUser = async (email, password) => {
+  const user = await findUserByEmailWithPassword(email);
+
+  if (!user) {
+    throw new AppError("Invalid email or password", 401);
+  }
+
+  if (!user.isVerified) {
+    throw new AppError("Please verify your account first", 401);
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordValid) {
+    throw new AppError("Invalid email or password", 401);
+  }
+  const token = generateToken(user._id);
+
+  return {
+    user,
+    token,
+  };
 };

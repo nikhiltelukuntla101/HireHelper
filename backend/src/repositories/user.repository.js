@@ -15,3 +15,7 @@ export const createUser = async (userData) => {
 export const findUserByEmailWithOTP = async (email) => {
   return await User.findOne({ email }).select("+otp +otpExpiry");
 };
+
+export const findUserByEmailWithPassword = async (email) => {
+  return await User.findOne({ email }).select("+password");
+};
