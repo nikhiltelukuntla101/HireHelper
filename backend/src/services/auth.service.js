@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import AppError from "../utils/AppError.js";
 import generateToken from "../utils/generateToken.js";
+import { sendOtpEmail } from "./email.service.js";
 
 import {
   findUserByEmail,
@@ -49,6 +50,7 @@ export const registerUser = async ({
     otp,
     otpExpiry,
   });
+  await sendOtpEmail(email, otp, firstName);
 
   return user;
 };
