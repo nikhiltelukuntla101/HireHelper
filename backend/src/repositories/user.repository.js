@@ -19,3 +19,7 @@ export const findUserByEmailWithOTP = async (email) => {
 export const findUserByEmailWithPassword = async (email) => {
   return await User.findOne({ email }).select("+password");
 };
+
+export const findUserById = async (id) => {
+  return await User.findById(id);
+};

@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import authRoutes from "./routes/auth.routes.js";
 import errorHandler from "./middleware/error.middleware.js";
+import protect from "./middleware/auth.middleware.js";
 
 const app = express();
 
@@ -19,6 +20,13 @@ app.post("/test", (req, res) => {
   res.json({
     success: true,
     message: "Test Route Works",
+  });
+});
+app.get("/protected", protect, (req, res) => {
+  res.json({
+    success: true,
+    message: "Protected Route Accessed",
+    user: req.user,
   });
 });
 
