@@ -1,7 +1,13 @@
-import { registerUser } from "../services/auth.service.js";
-import { verifyOTPService } from "../services/auth.service.js";
+import {
+  registerUser,
+  resendOtpService,
+  verifyOTPService,
+  resetPasswordService,
+  forgotPasswordService,
+  loginUser,
+} from "../services/auth.service.js";
+
 import asyncHandler from "../utils/asyncHandler.js";
-import { loginUser } from "../services/auth.service.js";
 
 export const register = asyncHandler(async (req, res) => {
   const user = await registerUser(req.body);
@@ -51,3 +57,35 @@ export const getMe = (req, res) => {
     user: req.user,
   });
 };
+
+export const resendOtp = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  await resendOtpService(email);
+
+  res.status(200).json({
+    success: true,
+    message: "OTP sent successfully",
+  });
+});
+
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  await forgotPasswordService(email);
+
+  res.status(200).json({
+    success: true,
+    message: "Password reset OTP sent successfully",
+  });
+});
+
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+
+  await resetPasswordService(email, otp, newPassword);
+
+  res.status(200).json({
+    success: true,
+    message: "Password reset successful",
+  });
+});

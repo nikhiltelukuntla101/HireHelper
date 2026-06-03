@@ -23,3 +23,9 @@ export const findUserByEmailWithPassword = async (email) => {
 export const findUserById = async (id) => {
   return await User.findById(id);
 };
+
+export const findUserByEmailWithResetOtp = async (email) => {
+  return await User.findOne({ email }).select(
+    "+resetPasswordOtp +resetPasswordOtpExpiry +password",
+  );
+};

@@ -7,6 +7,7 @@ import {
   findUserByEmail,
   findUserByPhone,
   createUser,
+  findUserByEmailWithResetOtp,
 } from "../repositories/user.repository.js";
 
 import generateOtp from "../utils/generateOtp.js";
@@ -100,4 +101,62 @@ export const loginUser = async (email, password) => {
     user,
     token,
   };
+};
+
+export const resendOtpService = async (email) => {
+  const user = await findUserByEmail(email);
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  if (user.isVerified) {
+    throw new AppError("Account already verified", 400);
+  }
+
+  const otp = generateOtp();
+  user.otp = otp;
+  user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+  await user.save();
+
+  await sendOtpEmail(user.email, otp, user.firstName);
+  return true;
+};
+
+export const forgotPasswordService = async (email) => {
+  const user = await findUserByEmail(email);
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  const otp = generateOtp();
+  user.resetPasswordOtp = otp;
+  user.resetPasswordOtpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+  await user.save();
+  await sendOtpEmail(user.email, otp, user.firstName);
+};
+
+export const resetPasswordService = async (email, otp, newPassword) => {
+  const user = await findUserByEmailWithResetOtp(email);
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  if (user.resetPasswordOtp !== otp) {
+    throw new AppError("Invalid OTP", 400);
+  }
+
+  if (user.resetPasswordOtpExpiry < new Date()) {
+    throw new AppError("OTP expired", 400);
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+  user.password = hashedPassword;
+
+  user.resetPasswordOtp = undefined;
+  user.resetPasswordOtpExpiry = undefined;
+
+  await user.save();
 };

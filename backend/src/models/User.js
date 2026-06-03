@@ -58,6 +58,15 @@ const userSchema = new mongoose.Schema(
       enum: ["owner", "helper", "both"],
       default: "both",
     },
+    resetPasswordOtp: {
+      type: String,
+      select: false,
+    },
+
+    resetPasswordOtpExpiry: {
+      type: Date,
+      select: false,
+    },
   },
   {
     timestamps: true,

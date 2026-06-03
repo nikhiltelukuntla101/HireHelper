@@ -4,6 +4,9 @@ import {
   verifyOtp,
   login,
   getMe,
+  resendOtp,
+  forgotPassword,
+  resetPassword,
 } from "../controllers/auth.controller.js";
 import validate from "../middleware/validate.middleware.js";
 import { registerValidator } from "../validators/auth.validator.js";
@@ -15,5 +18,10 @@ router.post("/register", registerValidator, validate, register);
 router.post("/verify-otp", verifyOtp);
 router.post("/login", login);
 router.get("/me", protect, getMe);
+
+router.post("/resend-otp", resendOtp);
+
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 export default router;
