@@ -28,3 +28,18 @@ export const findFeedTasks = async (userId) => {
       createdAt: -1,
     });
 };
+
+export const findTasksById = async (taskId) => {
+  return (
+    await Task.findById(taskId),
+    populate("owner", "firstName lastName email phone profilePicture")
+  );
+};
+
+export const updateTaskById = async (taskId, updateData) => {
+  return await Task.findByIdAndUpdate(taskId, updateData, { new: true });
+};
+
+export const deleteTaskById = async (taskId) => {
+  return await Task.findByIdAndDelete(taskId);
+};

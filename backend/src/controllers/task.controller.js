@@ -3,6 +3,9 @@ import {
   createTaskService,
   getMyTasksService,
   getFeedTasksService,
+  getTasksByIdService,
+  updateTaskService,
+  deleteTaskService,
 } from "../services/task.service.js";
 
 export const createTask = AsyncHandler(async (req, res) => {
@@ -32,5 +35,31 @@ export const getFeedTasks = AsyncHandler(async (req, res) => {
     success: true,
     count: tasks.length,
     tasks,
+  });
+});
+
+export const getTaskById = AsyncHandler(async (req, res) => {
+  const task = await getTasksByIdService(req.params.id);
+  res.status(200).json({
+    success: true,
+    task,
+  });
+});
+
+export const updateTask = AsyncHandler(async (req, res) => {
+  const task = await updateTaskService(req.params.id, req.user._id, req.body);
+  res.status(200).json({
+    success: true,
+    message: "Task updated successfully",
+    task,
+  });
+});
+
+export const deleteTask = AsyncHandler(async (req, res) => {
+  await deleteTaskService(req.params.id, req.user._id);
+
+  res.status(200).json({
+    success: true,
+    message: "Task deleted successfully",
   });
 });

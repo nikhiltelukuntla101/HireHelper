@@ -15,7 +15,6 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan("dev"));
 app.use("/api/v1/auth", authRoutes);
-app.use(errorHandler);
 
 app.use("/api/v1/tasks", taskRoutes);
 
@@ -32,5 +31,7 @@ app.get("/protected", protect, (req, res) => {
     user: req.user,
   });
 });
+
+app.use(errorHandler);
 
 export default app;
