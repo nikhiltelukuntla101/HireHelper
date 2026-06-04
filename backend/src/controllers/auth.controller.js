@@ -51,10 +51,26 @@ export const login = asyncHandler(async (req, res) => {
   });
 });
 
+export const logout = (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
+};
+
 export const getMe = (req, res) => {
   res.status(200).json({
     success: true,
-    user: req.user,
+    user: {
+      id: req.user._id,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+      email: req.user.email,
+      phone: req.user.phone,
+      role: req.user.role,
+      profilePicture: req.user.profilePicture,
+      isVerified: req.user.isVerified,
+    },
   });
 };
 

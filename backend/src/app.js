@@ -5,6 +5,7 @@ import morgan from "morgan";
 import authRoutes from "./routes/auth.routes.js";
 import errorHandler from "./middleware/error.middleware.js";
 import protect from "./middleware/auth.middleware.js";
+import taskRoutes from "./routes/task.routes.js";
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use("/api/v1/auth", authRoutes);
 app.use(errorHandler);
+
+app.use("/api/v1/tasks", taskRoutes);
 
 app.post("/test", (req, res) => {
   res.json({
