@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes.js";
 import errorHandler from "./middleware/error.middleware.js";
 import protect from "./middleware/auth.middleware.js";
 import taskRoutes from "./routes/task.routes.js";
+import requestRoutes from "./routes/request.routes.js";
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.get("/protected", protect, (req, res) => {
     user: req.user,
   });
 });
+app.use("/api/v1/requests", requestRoutes);
 
 app.use(errorHandler);
 

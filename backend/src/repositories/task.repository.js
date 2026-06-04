@@ -43,3 +43,7 @@ export const updateTaskById = async (taskId, updateData) => {
 export const deleteTaskById = async (taskId) => {
   return await Task.findByIdAndDelete(taskId);
 };
+
+export const updateTaskStatus = async (taskId, status) => {
+  return await Task.findByIdAndUpdate(taskId, { status }, { new: true });
+};
