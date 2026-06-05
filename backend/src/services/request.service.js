@@ -2,6 +2,7 @@ import AppError from "../utils/AppError.js";
 import {
   findTaskById,
   updateTaskStatus,
+  updateTaskById,
 } from "../repositories/task.repository.js";
 import { findUserById } from "../repositories/user.repository.js";
 
@@ -19,7 +20,7 @@ import { createNotificationService } from "./notification.service.js";
 export const createRequestService = async (taskId, requesterId) => {
   const requester = await findUserById(requesterId);
 
-  if (requester.role !== "helper" && request.role !== "both") {
+  if (requester.role !== "helper" && requester.role !== "both") {
     throw new AppError("Only helpers can request tasks", 403);
   }
 
@@ -74,7 +75,12 @@ export const acceptRequestService = async (requestId, ownerId) => {
 
   const updatedRequest = await updateRequestStatus(requestId, "accepted");
 
-  await updateTaskStatus(request.task._id, "assigned");
+  const updatedTask = await updateTaskById(request.task._id, {
+    status: "assigned",
+    assignedHelper: request.requester,
+  });
+
+  console.log("UPDATED TASK:", updatedTask);
 
   await createNotificationService(
     request.requester,

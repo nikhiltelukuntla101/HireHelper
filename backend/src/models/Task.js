@@ -36,8 +36,19 @@ const taskSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["open", "assigned", "completed", "cancelled"],
+      enum: [
+        "open",
+        "assigned",
+        "pending_confirmation",
+        "completed",
+        "cancelled",
+      ],
       default: "open",
+    },
+    assignedHelper: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
   },
   { timestamps: true },

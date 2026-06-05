@@ -60,3 +60,14 @@ export const deleteTaskService = async (taskId, userId) => {
 
   await deleteTaskById(taskId);
 };
+
+export const markTasCompletedService = async (taskId, userId) => {
+  const task = await findTaskById(taskId);
+  if (!task) {
+    throw new AppError("Task not found", 404);
+  }
+  if (task.status !== "assigned") {
+    return new AppError("Tasj is not assigned", 400);
+  }
+  return task;
+};

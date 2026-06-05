@@ -30,9 +30,9 @@ export const findFeedTasks = async (userId) => {
 };
 
 export const findTasksById = async (taskId) => {
-  return (
-    await Task.findById(taskId),
-    populate("owner", "firstName lastName email phone profilePicture")
+  return await Task.findById(taskId).populate(
+    "owner",
+    "firstName lastName email phone profilePicture",
   );
 };
 
