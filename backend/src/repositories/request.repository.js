@@ -35,3 +35,18 @@ export const findRequestById = async (requestId) => {
 export const updateRequestStatus = async (requestId, status) => {
   return await Request.findByIdAndUpdate(requestId, { status }, { new: true });
 };
+
+export const rejectOtherRequestsForTask = async (taskId, acceptedRequestId) => {
+  return await Request.updateMany(
+    {
+      task: taskId,
+      _id: { $ne: acceptedRequestId },
+      status: "pending",
+    },
+    {
+      $set: {
+        status: "rejected",
+      },
+    },
+  );
+};

@@ -11,6 +11,7 @@ import {
   findReceivedRequests,
   findRequestById,
   updateRequestStatus,
+  rejectOtherRequestsForTask,
 } from "../repositories/request.repository.js";
 
 export const createRequestService = async (taskId, requesterId) => {
@@ -65,6 +66,7 @@ export const acceptRequestService = async (requestId, ownerId) => {
   const updatedRequest = await updateRequestStatus(requestId, "accepted");
 
   await updateTaskStatus(request.task._id, "assigned");
+  await rejectOtherRequestsForTask(request.task._id, requestId);
   return updatedRequest;
 };
 
