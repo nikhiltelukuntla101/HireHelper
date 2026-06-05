@@ -6,6 +6,8 @@ import {
   getTasksByIdService,
   updateTaskService,
   deleteTaskService,
+  markTaskCompleteService,
+  confirmTaskCompletionService,
 } from "../services/task.service.js";
 
 export const createTask = AsyncHandler(async (req, res) => {
@@ -63,3 +65,33 @@ export const deleteTask = AsyncHandler(async (req, res) => {
     message: "Task deleted successfully",
   });
 });
+
+export const markTaskCompete = async (req, res, next) => {
+  try {
+    const task = await markTaskCompleteService(req.params.taskId, req.user._id);
+    res.status(200).json({
+      success: true,
+      message: "Task marked as completed",
+      data: task,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const confirmTaskCompletion = async (req, res, next) => {
+  try {
+    const task = await confirmTaskCompletionService(
+      req.params.taskId,
+      req.user._id,
+    );
+
+    res.status(200).json({
+      success: true,
+      message: `Task ${task.title} confirmed as completed`,
+      data: task,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1,3 +1,4 @@
+import { createNotificationService } from "./notification.service.js";
 import {
   createTask,
   findTaskByOwner,
@@ -61,13 +62,53 @@ export const deleteTaskService = async (taskId, userId) => {
   await deleteTaskById(taskId);
 };
 
-export const markTasCompletedService = async (taskId, userId) => {
+export const markTaskCompleteService = async (taskId, helperId) => {
   const task = await findTaskById(taskId);
   if (!task) {
     throw new AppError("Task not found", 404);
   }
-  if (task.status !== "assigned") {
-    return new AppError("Tasj is not assigned", 400);
+  if (!task.assignedHelper) {
+    throw new AppError("Task has no assigned helper", 400);
   }
-  return task;
+  if (task.assignedHelper.toString() !== helperId.toString()) {
+    throw new AppError("Only assigned helper can mark task complete", 403);
+  }
+  if (task.status !== "assigned") {
+    throw new AppError("Task is not in assigned state", 400);
+  }
+
+  const updatedTask = await updateTaskById(taskId, {
+    status: "pending_confirmation",
+  });
+
+  await createNotificationService(
+    task.owner,
+    `Task "${task.title}" has been marked complete and is awaiting confirmation`,
+  );
+  return updatedTask;
+};
+
+export const confirmTaskCompletionService = async (taskId, ownerId) => {
+  const task = await findTaskById(taskId);
+  console.log("Task ID:", taskId);
+  console.log("Task Status:", task.status);
+
+  if (!task) {
+    throw new AppError("Task not found", 404);
+  }
+  if (task.owner.toString() !== ownerId.toString()) {
+    throw new AppError("Only owner can confirm completion", 403);
+  }
+  if (task.status !== "pending_confirmation") {
+    throw new AppError("Task is not awaiting confirmation", 400);
+  }
+  const updatedTask = await updateTaskById(taskId, {
+    status: "completed",
+  });
+  await createNotificationService(
+    task.assignedHelper,
+    `Task "${task.title}" has been confirmed as completed`,
+  );
+
+  return updatedTask;
 };
