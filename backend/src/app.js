@@ -7,6 +7,7 @@ import errorHandler from "./middleware/error.middleware.js";
 import protect from "./middleware/auth.middleware.js";
 import taskRoutes from "./routes/task.routes.js";
 import requestRoutes from "./routes/request.routes.js";
+import notificationRouters from "./routes/notification.routes.js";
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.get("/protected", protect, (req, res) => {
   });
 });
 app.use("/api/v1/requests", requestRoutes);
+app.use("/api/v1/notifications", notificationRouters);
 
 app.use(errorHandler);
 

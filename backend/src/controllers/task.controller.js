@@ -9,7 +9,7 @@ import {
 } from "../services/task.service.js";
 
 export const createTask = AsyncHandler(async (req, res) => {
-  const task = await createTaskService(req.body, req.user._id);
+  const task = await createTaskService(req.body, req.user);
 
   res.status(201).json({
     success: true,

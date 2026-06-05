@@ -3,6 +3,7 @@ import {
   findTaskById,
   updateTaskStatus,
 } from "../repositories/task.repository.js";
+import { findUserById } from "../repositories/user.repository.js";
 
 import {
   createRequest,
@@ -13,14 +14,17 @@ import {
   updateRequestStatus,
   rejectOtherRequestsForTask,
 } from "../repositories/request.repository.js";
+import { createNotificationService } from "./notification.service.js";
 
 export const createRequestService = async (taskId, requesterId) => {
-  console.log("TASK ID:", taskId);
+  const requester = await findUserById(requesterId);
+
+  if (requester.role !== "helper" && request.role !== "both") {
+    throw new AppError("Only helpers can request tasks", 403);
+  }
 
   const task = await findTaskById(taskId);
 
-  console.log("TASK FOUND:", task);
-  taskId;
   if (!task) {
     throw new AppError("Task not found", 404);
   }
@@ -36,10 +40,15 @@ export const createRequestService = async (taskId, requesterId) => {
   if (existingRequest) {
     throw new AppError("Request already sent", 400);
   }
-  return await createRequest({
+  const request = await createRequest({
     task: taskId,
     requester: requesterId,
   });
+  await createNotificationService(
+    task.owner,
+    "You have received a new request for your task",
+  );
+  return request;
 };
 
 export const getMyRequestsService = async (requesterId) => {
@@ -66,6 +75,11 @@ export const acceptRequestService = async (requestId, ownerId) => {
   const updatedRequest = await updateRequestStatus(requestId, "accepted");
 
   await updateTaskStatus(request.task._id, "assigned");
+
+  await createNotificationService(
+    request.requester,
+    `Your request for "${request.task.title}" has been accepted`,
+  );
   await rejectOtherRequestsForTask(request.task._id, requestId);
   return updatedRequest;
 };
@@ -85,5 +99,11 @@ export const rejectRequestService = async (requestId, ownerId) => {
     throw new AppError(`Request is already ${request.status}`, 400);
   }
 
-  return await updateRequestStatus(requestId, "rejected");
+  const updatedRequest = await updateRequestStatus(requestId, "rejected");
+
+  await createNotificationService(
+    request.requester,
+    `Your request for ${request.task.title} has been rejected`,
+  );
+  return updatedRequest;
 };

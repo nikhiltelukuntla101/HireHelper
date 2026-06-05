@@ -8,10 +8,14 @@ import {
 } from "../repositories/task.repository.js";
 import AppError from "../utils/AppError.js";
 
-export const createTaskService = async (taskData, ownerId) => {
+export const createTaskService = async (taskData, user) => {
+  if (user.role !== "owner" && user.role !== "both") {
+    throw new AppError("Only owners can create tasks", 403);
+  }
+
   return await createTask({
     ...taskData,
-    owner: ownerId,
+    owner: user._id,
   });
 };
 
