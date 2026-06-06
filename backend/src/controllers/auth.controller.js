@@ -10,6 +10,7 @@ import {
 import asyncHandler from "../utils/asyncHandler.js";
 
 export const register = asyncHandler(async (req, res) => {
+  console.log(req.body);
   const user = await registerUser(req.body);
 
   res.status(201).json({

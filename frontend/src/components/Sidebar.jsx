@@ -1,0 +1,24 @@
+import { Link } from "react-router-dom";
+
+function Sidebar() {
+  return (
+    <div className="w-64 bg-gray-100 p-4">
+      <h1>HireHelper</h1>
+
+      <div className="flex flex-col gap-4">
+        <Link to="/dashboard">Feed</Link>
+        <Link to="/dashboard/my-tasks">My Tasks</Link>
+        <Link to="/dashboard/requests">Requests</Link>
+        <Link to="/dashboard/my-requests">My Requests</Link>
+        <Link to="/dashboard/add-task">Add Task</Link>
+        <Link to="/dashboard/settings">Settings</Link>
+      </div>
+      <div className="mt-20">
+        <p>Sai Nikhil</p>
+        <button>Logout</button>
+      </div>
+    </div>
+  );
+}
+
+export default Sidebar;
