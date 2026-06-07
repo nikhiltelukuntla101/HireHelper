@@ -11,6 +11,7 @@ function Register() {
     email: "",
     phone: "",
     password: "",
+    role: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -102,6 +103,25 @@ function Register() {
             onChange={handleChange}
             required
           />
+        </div>
+        <div>
+          <label className="block mb-1">Role</label>
+
+          <select
+            value={formData.role}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                role: e.target.value,
+              })
+            }
+            className="w-full border p-2 rounded"
+          >
+            <option value="">Select Role</option>
+            <option value="owner">Need Help</option>
+            <option value="helper">Want to Help</option>
+            <option value="both">Both</option>
+          </select>
         </div>
 
         <button type="submit" disabled={loading}>

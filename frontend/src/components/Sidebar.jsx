@@ -1,6 +1,15 @@
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Sidebar() {
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/");
+  };
   return (
     <div className="w-64 bg-gray-100 p-4">
       <h1>HireHelper</h1>
@@ -14,8 +23,10 @@ function Sidebar() {
         <Link to="/dashboard/settings">Settings</Link>
       </div>
       <div className="mt-20">
-        <p>Sai Nikhil</p>
-        <button>Logout</button>
+        <p>
+          {user?.firstName} {user?.lastName}
+        </p>
+        <button onClick={handleLogout}>Logout</button>
       </div>
     </div>
   );

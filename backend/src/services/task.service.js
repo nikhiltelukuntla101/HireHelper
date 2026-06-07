@@ -10,6 +10,9 @@ import {
 import AppError from "../utils/AppError.js";
 
 export const createTaskService = async (taskData, user) => {
+  console.log("TASK DATA:", taskData);
+  console.log("USER:", user);
+
   if (user.role !== "owner" && user.role !== "both") {
     throw new AppError("Only owners can create tasks", 403);
   }

@@ -86,8 +86,17 @@ export const acceptRequestService = async (requestId, ownerId) => {
     request.requester,
     `Your request for "${request.task.title}" has been accepted`,
   );
-  await rejectOtherRequestsForTask(request.task._id, requestId);
-  return updatedRequest;
+  const rejectedRequests = await rejectOtherRequestsForTask(
+    request.task._id,
+    requestId,
+  );
+
+  for (const req of rejectedRequests) {
+    await createNotificationService(
+      req.requester,
+      `Another helper was selected for "${request.task.title}"`,
+    );
+  }
 };
 
 export const rejectRequestService = async (requestId, ownerId) => {
